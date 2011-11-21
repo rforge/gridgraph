@@ -1,0 +1,11 @@
+Package:      gridGraphviz
+Version:      0.1
+Depends:      grid, graph, Rgraphviz
+Suggests:     gridSVG
+SystemRequirements: graphviz
+Title:        Drawing Graphs with Grid 
+Author:       Paul Murrell
+Maintainer:   Paul Murrell <p.murrell@auckland.ac.nz>
+Description:  Functions for drawing node-and-edge graphs that have been 
+              laid out by graphviz.
+License:      GPL (>= 2)
