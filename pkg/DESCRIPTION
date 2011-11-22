@@ -1,6 +1,6 @@
 Package:      gridGraphviz
 Version:      0.1
-Depends:      grid, graph, Rgraphviz
+Depends:      R (>= 2.15.0), grid, graph, Rgraphviz
 Suggests:     gridSVG
 SystemRequirements: graphviz
 Title:        Drawing Graphs with Grid 
