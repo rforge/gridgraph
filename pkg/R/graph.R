@@ -102,19 +102,14 @@ drawNode <- function(node) {
                    fontcolor=fontcol, fontsize=fontsize))
 }
 
-curveGrob <- function(curve, col, lwd, lty) {
+makeCurve <- function(curve, col, lwd, lty) {
     controlPoints <- pointList(curve)
     bezierGrob(unit(sapply(controlPoints, "[" ,1), "native"),
                unit(sapply(controlPoints, "[" ,2), "native"),
                gp=gpar(col=col, lwd=lwd, lty=lty))
 }
 
-drawCurve <- function(curve, col, lwd, lty) {
-    grid.draw(curveGrob(curve, col, lwd, lty))
-}
-
-drawDetails.edgegrob <- function(x, ...) {
-    edge <- x$edge
+makeEdge <- function(edge, arrowlen) {
     if (!length(edge@lwd))
         edge@lwd <- 1    
     if (!length(edge@lty))
@@ -123,18 +118,19 @@ drawDetails.edgegrob <- function(x, ...) {
     splines <- splines(edge)
     n <- length(splines)
     col <- color(edge)
-    lapply(splines, drawCurve, col=col, lwd=edge@lwd, lty=edge@lty)
+    curves <- lapply(splines, makeCurve, col=col, lwd=edge@lwd, lty=edge@lty)
     lastCP <- pointList(splines[[n]])[[4]]
-    arrow <- arrow(angle=10, type="closed", length=x$arrowlen)
-    grid.segments(lastCP[1], lastCP[2],
-                  getX(ep(edge)), getY(ep(edge)),
-                  default.units="native",
-                  arrow=arrow,
-                  gp=gpar(col=col, fill=col, lwd=edge@lwd, lty=edge@lty))
+    arrow <- arrow(angle=10, type="closed", length=arrowlen)
+    line <- segmentsGrob(lastCP[1], lastCP[2],
+                         getX(ep(edge)), getY(ep(edge)),
+                         default.units="native",
+                         arrow=arrow,
+                         gp=gpar(col=col, fill=col, lwd=edge@lwd, lty=edge@lty))
+    gTree(children=do.call("gList", c(curves, list(line))))
 }
 
 drawEdge <- function(edge, arrowlen) {
-    grid.draw(grob(edge=edge, arrowlen=arrowlen, cl="edgegrob"))
+    grid.draw(makeEdge(edge, arrowlen))
 }
 
 grid.graph <- function(rag, newpage=FALSE) {
@@ -153,8 +149,8 @@ grid.graph <- function(rag, newpage=FALSE) {
                     .02*unit(getY(upRight(bb)) - getY(botLeft(bb)), "native"))
     # Ensure aspect ratio
     pushViewport(viewport(layout=grid.layout(1, 1,
-                            width=(getX(upRight(bb)) - getX(botLeft(bb))) /
-                                  (getY(upRight(bb)) - getY(botLeft(bb))),
+                            widths=(getX(upRight(bb)) - getX(botLeft(bb))) /
+                                   (getY(upRight(bb)) - getY(botLeft(bb))),
                             respect=TRUE)))
     pushViewport(viewport(layout.pos.col=1,
                           xscale=c(getX(botLeft(bb)), getX(upRight(bb))),

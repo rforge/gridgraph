@@ -1,6 +1,3 @@
 
-importFrom("grid", "drawDetails")
-
 export("grid.graph")
 
-S3method("drawDetails", "edgegrob")
