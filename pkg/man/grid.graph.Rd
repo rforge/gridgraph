@@ -10,7 +10,7 @@ Draw a Node-and-Edge Graph
   the \pkg{Rgraphviz} package, and draw it.
 }
 \usage{
-grid.graph(rag, newpage = FALSE)
+grid.graph(rag, newpage = FALSE, nodesOnTop = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,10 @@ grid.graph(rag, newpage = FALSE)
 \item{newpage}{
   Logical value indicating whether to draw the graph on a new page.
 %%     ~~Describe \code{newpage} here~~
+}
+\item{nodesOnTop}{
+  Logical value indicating whether nodes should be drawn after
+  edges (or vice versa).
 }
 }
 \references{

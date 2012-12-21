@@ -77,11 +77,11 @@ drawNode <- function(node) {
     lwidth <- getNodeLW(node)
     rwidth <- getNodeRW(node)
     col <- color(node)
-    if (is.na(col)) {
+    if (is.na(col) || col == "") {
         col <- "black"
     }
     fill <- fillcolor(node)
-    if (is.na(fill)) {
+    if (is.na(fill) || fill == "") {
         fill <- "transparent"
     }
     fontcol <- labelColor(txtLabel(node))
@@ -109,31 +109,76 @@ makeCurve <- function(curve, col, lwd, lty) {
                gp=gpar(col=col, lwd=lwd, lty=lty))
 }
 
+drawCurve <- function(curve, col, lwd, lty) {
+    grid.draw(curveGrob(curve, col, lwd, lty))
+}
+
+manualArrow <- function(x1, y1, x2, y2,
+                        col, lwd, lty, arrowhead, arrowsize) {
+    x1i <- convertX(unit(x1, "native"), "inches", valueOnly=TRUE)
+    x2i <- convertX(unit(x2, "native"), "inches", valueOnly=TRUE)
+    y1i <- convertY(unit(y1, "native"), "inches", valueOnly=TRUE)
+    y2i <- convertY(unit(y2, "native"), "inches", valueOnly=TRUE)
+    dx <- x2i - x1i
+    dy <- y2i - y1i
+    theta <- atan2(dy, dx)
+    len <- convertWidth(arrowsize, "inches", valueOnly=TRUE)
+    if (arrowhead == "dot") {
+        circleGrob(x2i - len/2*cos(theta), y2i - len/2*sin(theta),
+                   r=len/2, default.units="inches",
+                   gp=gpar(col=col, fill=col, lwd=lwd, lty=lty))
+    } else {
+        NULL
+    }
+}
+
 makeEdge <- function(edge, arrowlen) {
     if (!length(edge@lwd))
         edge@lwd <- 1    
     if (!length(edge@lty))
         edge@lty <- "solid"
-    # FIXME:  assumes arrow at end of edge
     splines <- splines(edge)
     n <- length(splines)
     col <- color(edge)
     curves <- lapply(splines, makeCurve, col=col, lwd=edge@lwd, lty=edge@lty)
+    # FIXME:  assumes arrow at end of edge
     lastCP <- pointList(splines[[n]])[[4]]
-    arrow <- arrow(angle=10, type="closed", length=arrowlen)
-    line <- segmentsGrob(lastCP[1], lastCP[2],
-                         getX(ep(edge)), getY(ep(edge)),
-                         default.units="native",
-                         arrow=arrow,
-                         gp=gpar(col=col, fill=col, lwd=edge@lwd, lty=edge@lty))
-    gTree(children=do.call("gList", c(curves, list(line))))
+    arrowsize <- as.numeric(arrowsize(edge))
+    if (length(arrowsize) && is.finite(arrowsize)) {
+        arrowsize <- unit(arrowsize*edge@lwd*get.gpar()$lex, "points")
+    } else {
+        # Stupid default set by grid.graph()
+        arrowsize <- arrowlen
+    }
+    arrowhead <- arrowhead(edge)
+    if (!length(arrowhead) || arrowhead == "" || arrowhead == "normal") {
+        arrow <- arrow(angle=15, type="closed", length=arrowsize) 
+        end <- list(segmentsGrob(lastCP[1], lastCP[2],
+                                 getX(ep(edge)), getY(ep(edge)),
+                                 default.units="native",
+                                 arrow=arrow,
+                                 gp=gpar(col=col, fill=col,
+                                     lwd=edge@lwd, lty=edge@lty)))
+    } else {
+        line <- segmentsGrob(lastCP[1], lastCP[2],
+                             getX(ep(edge)), getY(ep(edge)),
+                             default.units="native",
+                             gp=gpar(col=col, fill=col,
+                                 lwd=edge@lwd, lty=edge@lty))
+        # Draw "arrowhead" by hand
+        arrow <- manualArrow(lastCP[1], lastCP[2],
+                             getX(ep(edge)), getY(ep(edge)),
+                             col, edge@lwd, edge@lty, arrowhead, arrowsize)
+        end <- list(line, arrow)
+    }
+    gTree(children=do.call("gList", c(curves, end)))
 }
 
 drawEdge <- function(edge, arrowlen) {
     grid.draw(makeEdge(edge, arrowlen))
 }
 
-grid.graph <- function(rag, newpage=FALSE) {
+grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
     if (!is(rag, "Ragraph") || !laidout(rag))
         stop("Must have a laid out Ragraph object")
     if (newpage) {
@@ -155,7 +200,12 @@ grid.graph <- function(rag, newpage=FALSE) {
     pushViewport(viewport(layout.pos.col=1,
                           xscale=c(getX(botLeft(bb)), getX(upRight(bb))),
                           yscale=c(getY(botLeft(bb)), getY(upRight(bb)))))
-    lapply(AgEdge(rag), drawEdge, arrowlen)
-    lapply(AgNode(rag), drawNode)
+    if (nodesOnTop) {
+        lapply(AgEdge(rag), drawEdge, arrowlen)
+        lapply(AgNode(rag), drawNode)
+    } else {
+        lapply(AgNode(rag), drawNode)
+        lapply(AgEdge(rag), drawEdge, arrowlen)
+    }
     upViewport(2)
 }
