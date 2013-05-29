@@ -4,6 +4,7 @@ Depends:      R (>= 2.15.0), grid, graph, Rgraphviz
 Suggests:     gridSVG
 SystemRequirements: graphviz
 Title:        Drawing Graphs with Grid 
+Version:      0.2
 Author:       Paul Murrell
 Maintainer:   Paul Murrell <p.murrell@auckland.ac.nz>
 Description:  Functions for drawing node-and-edge graphs that have been 

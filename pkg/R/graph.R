@@ -145,7 +145,8 @@ makeEdge <- function(edge, arrowlen) {
     lastCP <- pointList(splines[[n]])[[4]]
     arrowsize <- as.numeric(arrowsize(edge))
     if (length(arrowsize) && is.finite(arrowsize)) {
-        arrowsize <- unit(arrowsize*edge@lwd*get.gpar()$lex, "points")
+        # arrowsize <- unit(10*arrowsize*edge@lwd*get.gpar()$lex, "points")
+        arrowsize <- unit(10*arrowsize, "points")
     } else {
         # Stupid default set by grid.graph()
         arrowsize <- arrowlen
@@ -153,6 +154,14 @@ makeEdge <- function(edge, arrowlen) {
     arrowhead <- arrowhead(edge)
     if (!length(arrowhead) || arrowhead == "" || arrowhead == "normal") {
         arrow <- arrow(angle=15, type="closed", length=arrowsize) 
+        end <- list(segmentsGrob(lastCP[1], lastCP[2],
+                                 getX(ep(edge)), getY(ep(edge)),
+                                 default.units="native",
+                                 arrow=arrow,
+                                 gp=gpar(col=col, fill=col,
+                                     lwd=edge@lwd, lty=edge@lty)))
+    } else if (arrowhead == "open") {
+        arrow <- arrow(angle=15, type="open", length=arrowsize) 
         end <- list(segmentsGrob(lastCP[1], lastCP[2],
                                  getX(ep(edge)), getY(ep(edge)),
                                  default.units="native",
