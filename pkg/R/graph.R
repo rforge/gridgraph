@@ -161,15 +161,16 @@ manualArrow <- function(x1, y1, x2, y2,
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                       col, lwd, lty) {
     if (arrowType == "none") {
-        z <- NULL
+        arrow <- NULL
     } else {
-        z <- segmentsGrob(startX, startY,
-                          endX, endY,
-                          default.units="native",
-                          arrow=arrow(angle=15, type=arrowType, length=arrowsize),
-                          gp=gpar(col=col, fill=col,
-                                  lwd=lwd, lty=lty))
+        arrow <- arrow(angle=15, type=arrowType, length=arrowsize)
     }
+    z <- segmentsGrob(startX, startY,
+                      endX, endY,
+                      default.units="native",
+                      arrow=arrow,
+                      gp=gpar(col=col, fill=col,
+                              lwd=lwd, lty=lty))
 }
 
 makeEdge <- function(edge, arrowlen, edgemode) {
@@ -212,19 +213,27 @@ makeEdge <- function(edge, arrowlen, edgemode) {
     }
     arrowhead <- arrowhead(edge)
     arrowtail <- arrowtail(edge)
-    
-    if (edgemode == "undirected" || edge@dir == "none") {
+
+    # "back" arrow    
+    if (edgemode == "directed" && 
+        (edge@dir == "both" || edge@dir == "back")) {
+            start <- list(makeArrow(arrowtail, arrowsize,
+                                    firstCP[1], firstCP[2], 
+                                    getX(sp(edge)), getY(sp(edge)), 
+                                    col, edge@lwd, edge@lty))
+    } else {
         start <- list()
+    }
+    
+    # "forward" arrow
+    if (edgemode == "directed" && 
+        (edge@dir == "both" || edge@dir == "forward")) {
+            end <- list(makeArrow(arrowhead, arrowsize,
+                                  lastCP[1], lastCP[2], 
+                                  getX(ep(edge)), getY(ep(edge)), 
+                                  col, edge@lwd, edge@lty))
+    } else {
         end <- list()
-    } else { 
-        start <- list(makeArrow(arrowtail, arrowsize,
-                                firstCP[1], firstCP[2], 
-                                getX(sp(edge)), getY(sp(edge)), 
-                                col, edge@lwd, edge@lty))
-        end <- list(makeArrow(arrowhead, arrowsize,
-                              lastCP[1], lastCP[2], 
-                              getX(ep(edge)), getY(ep(edge)), 
-                              col, edge@lwd, edge@lty))
     }
     
     gTree(children=do.call("gList", c(curves, start, end, lab)))
