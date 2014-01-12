@@ -1,3 +1,4 @@
 
-export("grid.graph")
+export("grid.graph",
+       "agopenSized")
 

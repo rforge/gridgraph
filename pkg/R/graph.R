@@ -258,10 +258,12 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
     arrowlen <- min(.02*unit(getX(upRight(bb)) - getX(botLeft(bb)), "native"),
                     .02*unit(getY(upRight(bb)) - getY(botLeft(bb)), "native"))
     # Ensure aspect ratio
-    pushViewport(viewport(layout=grid.layout(1, 1,
-                            widths=(getX(upRight(bb)) - getX(botLeft(bb))) /
-                                   (getY(upRight(bb)) - getY(botLeft(bb))),
-                            respect=TRUE)))
+    pushViewport(viewport(width=unit(getX(upRight(bb))/72, "inches"),
+                          height=unit(getY(upRight(bb))/72, "inches"),
+                          layout=grid.layout(1, 1,
+                              widths=(getX(upRight(bb)) - getX(botLeft(bb))) /
+                                     (getY(upRight(bb)) - getY(botLeft(bb))),
+                              respect=TRUE)))
     pushViewport(viewport(layout.pos.col=1,
                           xscale=c(getX(botLeft(bb)), getX(upRight(bb))),
                           yscale=c(getY(botLeft(bb)), getY(upRight(bb)))))
