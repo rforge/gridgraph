@@ -163,7 +163,10 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
     if (arrowType == "none") {
         arrow <- NULL
     } else {
-        arrow <- arrow(angle=15, type=arrowType, length=arrowsize)
+        # set arrowlength based on distance from last control point to ep/sp
+        arrowDist <- sqrt((startX-endX)^2 + (startY-endY)^2)
+        arrowlen <- unit(arrowsize*arrowDist, "points")
+        arrow <- arrow(angle=15, type=arrowType, length=arrowlen)
     }
     z <- segmentsGrob(startX, startY,
                       endX, endY,
@@ -173,7 +176,7 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
                               lwd=lwd, lty=lty))
 }
 
-makeEdge <- function(edge, arrowlen, edgemode) {
+makeEdge <- function(edge, edgemode) {
     if (!length(edge@lwd))
         edge@lwd <- 1    
     if (!length(edge@lty))
@@ -200,17 +203,9 @@ makeEdge <- function(edge, arrowlen, edgemode) {
         lab <- list()
     }
         
-    # FIXME:  assumes arrow at end of edge
     firstCP <- pointList(splines[[n]])[[1]]
     lastCP <- pointList(splines[[n]])[[4]]
     arrowsize <- as.numeric(arrowsize(edge))
-    if (length(arrowsize) && is.finite(arrowsize)) {
-        # arrowsize <- unit(10*arrowsize*edge@lwd*get.gpar()$lex, "points")
-        arrowsize <- unit(10*arrowsize, "points")
-    } else {
-        # Stupid default set by grid.graph()
-        arrowsize <- arrowlen
-    }
     arrowhead <- arrowhead(edge)
     arrowtail <- arrowtail(edge)
 
@@ -239,8 +234,8 @@ makeEdge <- function(edge, arrowlen, edgemode) {
     gTree(children=do.call("gList", c(curves, start, end, lab)))
 }
 
-drawEdge <- function(edge, arrowlen, edgemode) {
-    grid.draw(makeEdge(edge, arrowlen, edgemode))
+drawEdge <- function(edge, edgemode) {
+    grid.draw(makeEdge(edge, edgemode))
 }
 
 grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
@@ -253,10 +248,6 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
     # The order is the same as the nodes in
     # the original graphNEL
     bb <- boundBox(rag)
-    # FIXME: needs better calculation for arrow head size!
-    # Set arrowlen based on graph size
-    arrowlen <- min(.02*unit(getX(upRight(bb)) - getX(botLeft(bb)), "native"),
-                    .02*unit(getY(upRight(bb)) - getY(botLeft(bb)), "native"))
     # Ensure aspect ratio
     pushViewport(viewport(width=unit(getX(upRight(bb))/72, "inches"),
                           height=unit(getY(upRight(bb))/72, "inches"),
@@ -268,11 +259,11 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
                           xscale=c(getX(botLeft(bb)), getX(upRight(bb))),
                           yscale=c(getY(botLeft(bb)), getY(upRight(bb)))))
     if (nodesOnTop) {
-        lapply(AgEdge(rag), drawEdge, arrowlen, edgemode(rag))
+        lapply(AgEdge(rag), drawEdge, edgemode(rag))
         lapply(AgNode(rag), drawNode)
     } else {
         lapply(AgNode(rag), drawNode)
-        lapply(AgEdge(rag), drawEdge, arrowlen, edgemode(rag))
+        lapply(AgEdge(rag), drawEdge, edgemode(rag))
     }
     upViewport(2)
 }
