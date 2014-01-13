@@ -163,10 +163,9 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
     if (arrowType == "none") {
         arrow <- NULL
     } else {
-        # set arrowlength based on distance from last control point to ep/sp
-        arrowDist <- sqrt((startX-endX)^2 + (startY-endY)^2)
-        arrowlen <- unit(arrowsize*arrowDist, "points")
-        arrow <- arrow(angle=15, type=arrowType, length=arrowlen)
+        # graphviz default arrow length is 10 pixes. modify by arrowsize
+        arrowlen <- unit(arrowsize*10, "native")
+        arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
     }
     z <- segmentsGrob(startX, startY,
                       endX, endY,
