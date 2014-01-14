@@ -161,18 +161,18 @@ manualArrow <- function(x1, y1, x2, y2,
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                       col, lwd, lty) {
     if (arrowType == "none") {
-        arrow <- NULL
+        z <- NULL
     } else {
         # graphviz default arrow length is 10 pixes. modify by arrowsize
         arrowlen <- unit(arrowsize*10, "native")
         arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
-    }
-    z <- segmentsGrob(startX, startY,
-                      endX, endY,
-                      default.units="native",
-                      arrow=arrow,
-                      gp=gpar(col=col, fill=col,
+        z <- segmentsGrob(startX, startY,
+                     endX, endY,
+                     default.units="native",
+                     arrow=arrow,
+                     gp=gpar(col=col, fill=col,
                               lwd=lwd, lty=lty))
+    }
 }
 
 makeEdge <- function(edge, edgemode) {
