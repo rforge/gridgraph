@@ -160,19 +160,19 @@ manualArrow <- function(x1, y1, x2, y2,
 
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                       col, lwd, lty) {
-    if (arrowType == "none") {
-        z <- NULL
-    } else {
-        # graphviz default arrow length is 10 pixes. modify by arrowsize
-        arrowlen <- unit(arrowsize*10, "native")
-        arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
-        z <- segmentsGrob(startX, startY,
-                     endX, endY,
-                     default.units="native",
-                     arrow=arrow,
-                     gp=gpar(col=col, fill=col,
-                              lwd=lwd, lty=lty))
-    }
+  if (arrowType != "none") {
+    # graphviz default arrow length is 10 pixes. modify by arrowsize
+    arrowlen <- unit(arrowsize*10, "native")
+    arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
+  } else {
+    arrow <- NULL
+  }
+  z <- segmentsGrob(startX, startY,
+                    endX, endY,
+                    default.units="native",
+                    arrow=arrow,
+                    gp=gpar(col=col, fill=col,
+                            lwd=lwd, lty=lty))
 }
 
 makeEdge <- function(edge, edgemode) {
@@ -209,25 +209,25 @@ makeEdge <- function(edge, edgemode) {
     arrowtail <- arrowtail(edge)
 
     # "back" arrow    
-    if (edgemode == "directed" && 
-        (edge@dir == "both" || edge@dir == "back")) {
-            start <- list(makeArrow(arrowtail, arrowsize,
-                                    firstCP[1], firstCP[2], 
-                                    getX(sp(edge)), getY(sp(edge)), 
-                                    col, edge@lwd, edge@lty))
+    if ((is.na(getX(sp(edge))) || is.na(getY(sp(edge)))) ||
+        (getX(sp(edge)) == 0 && getY(sp(edge)) == 0)) {
+      start <- list()
     } else {
-        start <- list()
+      start <- list(makeArrow(arrowtail, arrowsize,
+                              firstCP[1], firstCP[2], 
+                              getX(sp(edge)), getY(sp(edge)), 
+                              col, edge@lwd, edge@lty))
     }
     
     # "forward" arrow
-    if (edgemode == "directed" && 
-        (edge@dir == "both" || edge@dir == "forward")) {
-            end <- list(makeArrow(arrowhead, arrowsize,
-                                  lastCP[1], lastCP[2], 
-                                  getX(ep(edge)), getY(ep(edge)), 
-                                  col, edge@lwd, edge@lty))
+    if ((is.na(getX(ep(edge))) || is.na(getY(ep(edge)))) ||
+        (getX(ep(edge)) == 0 && getY(ep(edge)) == 0)) {
+      end <- list()
     } else {
-        end <- list()
+      end <- list(makeArrow(arrowhead, arrowsize,
+                            lastCP[1], lastCP[2], 
+                            getX(ep(edge)), getY(ep(edge)), 
+                            col, edge@lwd, edge@lty))
     }
     
     gTree(children=do.call("gList", c(curves, start, end, lab)))
@@ -247,6 +247,9 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
     # The order is the same as the nodes in
     # the original graphNEL
     bb <- boundBox(rag)
+    dims <- upRight(bb)
+    width <- getX(dims)
+    height <- getX(dims)
     # Ensure aspect ratio
     pushViewport(viewport(width=unit(getX(upRight(bb))/72, "inches"),
                           height=unit(getY(upRight(bb))/72, "inches"),
