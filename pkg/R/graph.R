@@ -44,9 +44,9 @@ node <- function(label, x=.5, y=.5,
     } else if (shape == "ellipse") { 
         angle <- seq(0, 2*pi, length=101)
         box <- polygonGrob(x + a*cos(angle),
-				                   y + b*sin(angle),
-				                   name="box",
-				                   gp=gpar(col=color, fill=fillcolor))
+                           y + b*sin(angle),
+                           name="box",
+                           gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "triangle" | shape == "pentagon" | shape == "hexagon" | 
                shape == "septagon" | shape == "octagon") {
         if (shape == "triangle") vertices = 3
@@ -160,7 +160,7 @@ manualArrow <- function(x1, y1, x2, y2,
 
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                       col, lwd, lty) {
-  if (arrowType != "none") {
+  if (arrowType == "open" || arrowType == "closed") {
     # graphviz default arrow length is 10 pixes. modify by arrowsize
     arrowlen <- unit(arrowsize*10, "native")
     arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
@@ -209,7 +209,8 @@ makeEdge <- function(edge, edgemode) {
     arrowtail <- arrowtail(edge)
 
     # "back" arrow    
-    if ((is.na(getX(sp(edge))) || is.na(getY(sp(edge)))) ||
+    if (edgemode == "undirected" || 
+        (is.na(getX(sp(edge))) || is.na(getY(sp(edge)))) ||
         (getX(sp(edge)) == 0 && getY(sp(edge)) == 0)) {
       start <- list()
     } else {
@@ -220,7 +221,8 @@ makeEdge <- function(edge, edgemode) {
     }
     
     # "forward" arrow
-    if ((is.na(getX(ep(edge))) || is.na(getY(ep(edge)))) ||
+    if (edgemode == "undirected" || 
+        (is.na(getX(ep(edge))) || is.na(getY(ep(edge)))) ||
         (getX(ep(edge)) == 0 && getY(ep(edge)) == 0)) {
       end <- list()
     } else {
@@ -247,9 +249,6 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
     # The order is the same as the nodes in
     # the original graphNEL
     bb <- boundBox(rag)
-    dims <- upRight(bb)
-    width <- getX(dims)
-    height <- getX(dims)
     # Ensure aspect ratio
     pushViewport(viewport(width=unit(getX(upRight(bb))/72, "inches"),
                           height=unit(getY(upRight(bb))/72, "inches"),
