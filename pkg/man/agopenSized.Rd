@@ -11,12 +11,24 @@ A function to obtain an \code{Ragraph} object with size set by graphviz
 \usage{
 agopenSized(graph, name, nodes, edges, kind = NULL, layoutType = "dot", 
             attrs = list(), nodeAttrs = list(), edgeAttrs = list(),
-            subGList = list())
+            subGList = list(), edgeMode = edgemode(graph),
+            recipEdges = c("combined", "distinct"))
 }
 \arguments{
-  All arguments the same as in \code{agopen}
-
-  NB: argument \code{layout} is omitted from this function.
+  \item{graph}{An object of class \code{graphNEL}}
+  \item{nodes}{A list of \code{pNode} objects}
+  \item{edges}{A list of \code{pEdge} objects}
+  \item{name}{The name of the graph}
+  \item{kind}{The type of graph}
+  \item{layoutType}{Defines the layout engine.  Defaults to dot, and see
+    \code{graphvizCapabilities()$layoutTypes} for possible values.}
+  \item{attrs}{A list of graphviz attributes}
+  \item{nodeAttrs}{A list of specific node attributes}
+  \item{edgeAttrs}{A list of specific edge attributes}
+  \item{subGList}{A list describing subgraphs for the graph parameter}
+  \item{edgeMode}{Whether the graph is directed or undirected}
+  \item{recipEdges}{How to handle reciprocated edges, defaults to
+    \code{combined}}
 }
 \details{
   While \code{agopen} can produce \code{Ragraph} objects laid out by
@@ -34,9 +46,7 @@ agopenSized(graph, name, nodes, edges, kind = NULL, layoutType = "dot",
   graphviz
 %% ~put references to the literature/web site here ~
 }
-\author{
-Ashley Noel Hinton
-}
+\author{Ashley Noel Hinton}
 \seealso{
   \code{\link{agopen}}
 }
