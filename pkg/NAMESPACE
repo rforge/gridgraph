@@ -2,6 +2,5 @@
 export("grid.graph",
        "agopenSized",
        "graphWidth",
-       "graphHeight",
-       "graphSize")
+       "graphHeight")
 

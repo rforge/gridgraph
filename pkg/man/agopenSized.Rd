@@ -1,10 +1,10 @@
 \name{agopenSized}
 \alias{agopenSized}
 \title{
-A function to obtain a \code{Ragraph} object with size set by graphviz
+A function to obtain an \code{Ragraph} object with size set by graphviz
 }
 \description{
-  This function will read in a \code{graph} object and create a
+  This function will read in a \code{graph} object and create an
   \code{Ragraph} object using the \pkg{Rgraphviz} function \code{agopen}, but
   with the size determined by graphviz, and not the \code{device} size.
 }
@@ -47,9 +47,7 @@ gnel <- new("graphNEL",
                        b=list(),
                        c=list()),
             edgemode="directed")
-rag <- agopen(gnel, "")
+rag <- agopenSized(gnel, "")
 grid.graph(rag)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{ dplot }

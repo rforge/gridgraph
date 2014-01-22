@@ -1,20 +1,19 @@
 ## Create an Ragraph object with size determined by graphviz
 
-## the following functions return and Ragraph's dimensions in inches
+## the following methods return and Ragraph's dimensions in inches
 ## used for determining size of graph used to override Rgraphciz's defaults, and
 ## for determining appropriate sizes for output to device
-graphWidth <- function (Ragraph) {
-    return(getX(upRight(boundBox(Ragraph)))/72)
+graphWidth <- function (graph) {
+  return(getX(upRight(boundBox(graph)))/72)
 }
-
-graphHeight <- function (Ragraph) {
-    return(getY(upRight(boundBox(Ragraph)))/72)
+graphHeight <- function (graph) {
+    return(getY(upRight(boundBox(graph)))/72)
 }
 
 ## return an Ragraph's size as character string of form "x,y" for setting size
 ## attribute for agopen()
-graphSize <- function (Ragraph) {
-    return(paste(graphWidth(Ragraph), graphHeight(Ragraph), sep=","))
+graphSize <- function (graph) {
+    return(paste(graphWidth(graph), graphHeight(graph), sep=","))
 }
 
 ## Rgraphviz's agopen() sets the size of an Ragraph object to either the size
