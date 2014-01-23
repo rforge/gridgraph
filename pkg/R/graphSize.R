@@ -19,6 +19,8 @@ graphSize <- function (graph) {
 ## Rgraphviz's agopen() sets the size of an Ragraph object to either the size
 ## of the open graphics device, or 7x7 inches.
 ## agopenSized produces an Ragraph object of the size determined by graphviz
+## NB: agopenSized() does not accept argument 'layout' as it should always
+## lay out the graph
 agopenSized <- function(graph, name, nodes, edges, kind = NULL,
                         layoutType = "dot", attrs = list(), nodeAttrs = list(), 
                         edgeAttrs = list(), subGList = list(),

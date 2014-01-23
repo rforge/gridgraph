@@ -209,7 +209,7 @@ makeEdge <- function(edge, edgemode) {
     arrowtail <- arrowtail(edge)
 
     # "back" arrow    
-    if (edgemode == "undirected" || 
+    if (edgemode == "undirected" || edge@dir == "forward" ||
         (is.na(getX(sp(edge))) || is.na(getY(sp(edge)))) ||
         (getX(sp(edge)) == 0 && getY(sp(edge)) == 0)) {
       start <- list()
@@ -221,7 +221,7 @@ makeEdge <- function(edge, edgemode) {
     }
     
     # "forward" arrow
-    if (edgemode == "undirected" || 
+    if (edgemode == "undirected" || edge@dir == "back" ||
         (is.na(getX(ep(edge))) || is.na(getY(ep(edge)))) ||
         (getX(ep(edge)) == 0 && getY(ep(edge)) == 0)) {
       end <- list()
