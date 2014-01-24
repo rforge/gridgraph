@@ -42,12 +42,17 @@ node <- function(label, x=.5, y=.5,
         box <- circleGrob(x, y, r=a, name="box",
                           gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "ellipse") { 
-        angle <- seq(0, 2*pi, length=101)
-        box <- polygonGrob(x + a*cos(angle),
-                           y + b*sin(angle),
-                           name="box",
-                           gp=gpar(col=color, fill=fillcolor))
-    } else if (shape == "triangle" | shape == "pentagon" | shape == "hexagon" | 
+      angle <- seq(0, 2*pi, length=101)
+      box <- polygonGrob(x + a*cos(angle),
+                         y + b*sin(angle),
+                         name="box",
+                         gp=gpar(col=color, fill=fillcolor))
+    } else if (shape == "triangle") {
+      box <- polygonGrob(x=unit.c(x, x-lwidth, x+rwidth),
+                         y=unit.c(y+b, y-b, y-b),
+                         name="box",
+                         gp=gpar(col=color, fill=fillcolor))
+    } else if (shape == "pentagon" | shape == "hexagon" | 
                shape == "septagon" | shape == "octagon") {
         if (shape == "triangle") vertices = 3
         else if (shape == "pentagon") vertices = 5
@@ -141,6 +146,8 @@ drawCurve <- function(curve, col, lwd, lty) {
 
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                       col, lwd, lty) {
+  if (arrowType == "normal") arrowType <- "closed"
+  if (arrowType == "vee") arrowType <- "open"
   if (arrowType == "none" || arrowType == "open" || arrowType == "closed") {
     arrow <- NULL
     if (arrowType != "none") {
