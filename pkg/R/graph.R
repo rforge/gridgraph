@@ -139,40 +139,74 @@ drawCurve <- function(curve, col, lwd, lty) {
     grid.draw(curveGrob(curve, col, lwd, lty))
 }
 
-manualArrow <- function(x1, y1, x2, y2,
-                        col, lwd, lty, arrowhead, arrowsize) {
-    x1i <- convertX(unit(x1, "native"), "inches", valueOnly=TRUE)
-    x2i <- convertX(unit(x2, "native"), "inches", valueOnly=TRUE)
-    y1i <- convertY(unit(y1, "native"), "inches", valueOnly=TRUE)
-    y2i <- convertY(unit(y2, "native"), "inches", valueOnly=TRUE)
-    dx <- x2i - x1i
-    dy <- y2i - y1i
-    theta <- atan2(dy, dx)
-    len <- convertWidth(arrowsize, "inches", valueOnly=TRUE)
-    if (arrowhead == "dot") {
-        circleGrob(x2i - len/2*cos(theta), y2i - len/2*sin(theta),
-                   r=len/2, default.units="inches",
-                   gp=gpar(col=col, fill=col, lwd=lwd, lty=lty))
-    } else {
-        NULL
-    }
-}
-
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                       col, lwd, lty) {
-  if (arrowType == "open" || arrowType == "closed") {
-    # graphviz default arrow length is 10 pixes. modify by arrowsize
-    arrowlen <- unit(arrowsize*10, "native")
-    arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
-  } else {
+  if (arrowType == "none" || arrowType == "open" || arrowType == "closed") {
     arrow <- NULL
+    if (arrowType != "none") {
+      # FIXME: using a calculated 'length' does not scale when adjusted by
+      # arrowsize, so graphviz default length 10 used
+      arrowlen <- unit(arrowsize*10, "native")
+      arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
+    }
+    segmentsGrob(startX, startY,
+                 endX, endY,
+                 default.units="native",
+                 arrow=arrow,
+                 gp=gpar(col=col, fill=col,
+                         lwd=lwd, lty=lty))
+  } else if (arrowType == "dot" || arrowType == "odot") {
+    # FIXME: does not scale correctly compared to graphviz. documentation shows
+    # graphviz sets default radius of 2, but does not work here. using 'length'
+    # gets reasonably close results for arrowsize ~= 1
+    dx <- endX - startX
+    dy <- endY - startY
+    length <- sqrt(dx^2 + dy^2) 
+    theta <- atan2(dy, dx)
+    r <- length/2 * arrowsize
+    # FIXME: transparent circle will show edge inside if arrowsize > 1 due to
+    # Rgraphviz not passing through arrow info at layout
+    if (arrowType == "odot") fill <- "transparent" else fill <- col
+    head <- circleGrob(endX - r*cos(theta), endY - r*sin(theta),
+                       r=r, default.units="native", name="dothead",
+                       gp=gpar(col=col, fill=fill, lwd=lwd, lty=lty))
+    segment <- NULL
+    # as different arrowheads cannot currently be passed through Rgraphviz's
+    # agopen when laying out a line segment connects the edge to the dot head
+    # when the arrowsize is less than the gap 'length'
+    if (arrowsize < 1) {
+      segment <- segmentsGrob(startX, startY,
+                              grobX("dothead", theta*180/pi),
+                              grobY("dothead", theta*180/pi),
+                              default.units="native",
+                              gp=gpar(col=col, fill=col,
+                                      lwd=lwd, lty=lty))
+    } 
+    gList(head, segment)
+  } else if (arrowType == "box" || arrowType == "obox") {
+    #FIXME: calculation of length, r, etc has same problems as with "dot" above
+    dx <- endX - startX
+    dy <- endY - startY
+    length <- sqrt(dx^2 + dy^2) 
+    theta <- atan2(dy, dx)
+    r <- length/2 * arrowsize
+    boxvp <- viewport(x=endX - r*cos(theta), y=endY - r*sin(theta),
+                      width=r*2, height=r*2, default.units="native",
+                      angle=theta*180/pi)
+    if (arrowType == "obox") fill <- "transparent" else fill <- col
+    head <- rectGrob(vp=boxvp, gp=gpar(col=col, fill=fill,
+                                       lwd=lwd, lty=lty))
+    segment <- NULL
+    if (arrowsize < 1) {
+      segment <- segmentsGrob(startX, startY,
+                              grobX("dothead", theta*180/pi),
+                              grobY("dothead", theta*180/pi),
+                              default.units="native",
+                              gp=gpar(col=col, fill=col,
+                                      lwd=lwd, lty=lty))
+    } 
+    gList(head, segment)
   }
-  z <- segmentsGrob(startX, startY,
-                    endX, endY,
-                    default.units="native",
-                    arrow=arrow,
-                    gp=gpar(col=col, fill=col,
-                            lwd=lwd, lty=lty))
 }
 
 makeEdge <- function(edge, edgemode) {
