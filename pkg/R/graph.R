@@ -47,11 +47,12 @@ node <- function(label, x=.5, y=.5,
                          y + b*sin(angle),
                          name="box",
                          gp=gpar(col=color, fill=fillcolor))
-    } else if (shape == "triangle" || shape == "pentagon" ||
-               shape == "hexagon" || shape == "septagon" ||
-               shape == "octagon"
+    } else if (shape == "polygon" || shape == "triangle" ||
+               shape == "pentagon" || shape == "hexagon" ||
+               shape == "septagon" || shape == "octagon"
                ) {
         vertices <- switch(shape,
+                           polygon = 4,
                            triangle = 3,
                            pentagon = 5,
                            hexagon = 6,
