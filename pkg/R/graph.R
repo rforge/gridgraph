@@ -47,23 +47,29 @@ node <- function(label, x=.5, y=.5,
                          y + b*sin(angle),
                          name="box",
                          gp=gpar(col=color, fill=fillcolor))
-    } else if (shape == "triangle") {
-      box <- polygonGrob(x=unit.c(x, x-lwidth, x+rwidth),
-                         y=unit.c(y+b, y-b, y-b),
-                         name="box",
-                         gp=gpar(col=color, fill=fillcolor))
-    } else if (shape == "pentagon" | shape == "hexagon" | 
-               shape == "septagon" | shape == "octagon") {
-        if (shape == "triangle") vertices = 3
-        else if (shape == "pentagon") vertices = 5
-        else if (shape == "hexagon") vertices = 6
-        else if (shape == "septagon") vertices = 7
-        else if (shape == "octagon") vertices = 8
+    } else if (shape == "triangle" || shape == "pentagon" ||
+               shape == "hexagon" || shape == "septagon" ||
+               shape == "octagon"
+               ) {
+        vertices <- switch(shape,
+                           triangle = 3,
+                           pentagon = 5,
+                           hexagon = 6,
+                           septagon = 7,
+                           octagon = 8)
         angle <- seq(0, 2*pi, length=vertices + 1)[-(vertices + 1)]
-        if (vertices %% 2 != 0) angle <- angle + pi/2
-        else angle <- angle + pi/vertices + pi/2
-        box <- polygonGrob(x + a*cos(angle),
-                           y + b*sin(angle),
+        if (vertices %% 2 != 0) {
+          angle <- angle + pi/2
+        } else {
+          angle <- angle + pi/vertices + pi/2
+          # expand polygon vertically to fill box
+          b <- b*(1/cos(pi/vertices))
+        }
+        if (vertices %% 4 == 0)
+          # expand polygon horizontally to fill box
+          a <- a*(1/cos(pi/vertices))
+        
+        box <- polygonGrob(x + a*cos(angle), y + b*sin(angle),
                            name="box",
                            gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "box") {
