@@ -175,7 +175,7 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
     z <- segmentsGrob(startX, startY,
                       endX, endY,
                       default.units="native",
-                      arrow=arrow,
+                      arrow=arrow, name=name,
                       gp=gpar(col=col, fill=col,
                               lwd=lwd, lty=lty))
   } else if (arrowType == "dot" || arrowType == "odot") {
@@ -191,7 +191,7 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
     # Rgraphviz not passing through arrow info at layout
     if (arrowType == "odot") fill <- "transparent" else fill <- col
     head <- circleGrob(endX - r*cos(theta), endY - r*sin(theta),
-                       r=r, default.units="native", name="dothead",
+                       r=r, default.units="native", name=name,
                        gp=gpar(col=col, fill=fill, lwd=lwd, lty=lty))
     segment <- NULL
     # as different arrowheads cannot currently be passed through Rgraphviz's
@@ -199,8 +199,8 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
     # when the arrowsize is less than the gap 'length'
     if (arrowsize < 1) {
       segment <- segmentsGrob(startX, startY,
-                              grobX("dothead", theta*180/pi),
-                              grobY("dothead", theta*180/pi),
+                              grobX(name, theta*180/pi),
+                              grobY(name, theta*180/pi),
                               default.units="native",
                               gp=gpar(col=col, fill=col,
                                       lwd=lwd, lty=lty))
@@ -218,19 +218,18 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
                       angle=theta*180/pi)
     if (arrowType == "obox") fill <- "transparent" else fill <- col
     head <- rectGrob(vp=boxvp, gp=gpar(col=col, fill=fill,
-                                       lwd=lwd, lty=lty))
+                                       lwd=lwd, lty=lty), name=name)
     segment <- NULL
     if (arrowsize < 1) {
       segment <- segmentsGrob(startX, startY,
-                              grobX("dothead", theta*180/pi),
-                              grobY("dothead", theta*180/pi),
+                              grobX(name, theta*180/pi),
+                              grobY(name, theta*180/pi),
                               default.units="native",
                               gp=gpar(col=col, fill=col,
                                       lwd=lwd, lty=lty))
     } 
     z <- gList(head, segment)
   }
-  z <- editGrob(z, name=name)
 }
 
 makeEdge <- function(edge, edgemode) {

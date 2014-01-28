@@ -11,13 +11,27 @@
 
     \item Added agopenSized() function to create Ragraph objects whose
     size is determined by graphviz
+    
+    \item agopenSized also passes edge weight information through properly, 
+    resulting in nicer looking graphs
+    
+    \item Added graphWidth and graphHeight functions to get graph dimension 
+    details easily for plotting
 
     \item Plot Ragraph objects at their specified size rather than fitting to
     the graphics device
+    
+    \item Added support for triangle, pentagon, hexagon, septagon, octagon, 
+    diamond and square node shapes
 
     \item Added support for edge labels
 
-    \item Arrow length set to graphviz default, now handles arrowsize better
+    \item Added support for dot/odot and box/obox arrow types
+    
+    \item Arrow length for "open" and "closed" arrows set to graphviz default, 
+    now handles arrowsize better
+    
+    \item Improved naming of grobs
   }
 }
 
