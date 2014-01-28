@@ -42,11 +42,11 @@ node <- function(label, x=.5, y=.5,
         box <- circleGrob(x, y, r=a, name="box",
                           gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "ellipse") { 
-      angle <- seq(0, 2*pi, length=101)
-      box <- polygonGrob(x + a*cos(angle),
-                         y + b*sin(angle),
-                         name="box",
-                         gp=gpar(col=color, fill=fillcolor))
+        angle <- seq(0, 2*pi, length=101)
+        box <- polygonGrob(x + a*cos(angle),
+                           y + b*sin(angle),
+                           name="box",
+                           gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "polygon" || shape == "triangle" ||
                shape == "pentagon" || shape == "hexagon" ||
                shape == "septagon" || shape == "octagon"
@@ -60,24 +60,27 @@ node <- function(label, x=.5, y=.5,
                            octagon = 8)
         angle <- seq(0, 2*pi, length=vertices + 1)[-(vertices + 1)]
         if (vertices %% 2 != 0) {
-          angle <- angle + pi/2
+            angle <- angle + pi/2
         } else {
-          angle <- angle + pi/vertices + pi/2
-          # expand polygon vertically to fill box
-          b <- b*(1/cos(pi/vertices))
+            angle <- angle + pi/vertices + pi/2
+            # expand polygon vertically to fill box
+            b <- b*(1/cos(pi/vertices))
         }
         if (vertices %% 4 == 0)
-          # expand polygon horizontally to fill box
-          a <- a*(1/cos(pi/vertices))
+            # expand polygon horizontally to fill box
+            a <- a*(1/cos(pi/vertices))
         
         box <- polygonGrob(x + a*cos(angle), y + b*sin(angle),
                            name="box",
                            gp=gpar(col=color, fill=fillcolor))
-    } else if (shape == "box") {
+    } else if (shape == "box" || shape == "rect" || shape == "rectangle") {
         box <- rectGrob(x, y,
                         width=lwidth + rwidth,
                         height=height,
                         name="box",         
+                        gp=gpar(col=color, fill=fillcolor))
+    } else if (shape == "square") {
+        box <- rectGrob(x, y, width=height, height=height,
                         gp=gpar(col=color, fill=fillcolor))
     } else { # plain
         warning("Unsupported node shape; using 'box'")
