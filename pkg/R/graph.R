@@ -1,10 +1,10 @@
 
 ### Draw an Ragraph laid out graph using grid
 
-makeLabel <- function(label, x, y, col, fontsize, cex) {
+makeLabel <- function(label, x, y, col, fontsize, cex, name) {
     textGrob(label, x, y,
              gp=gpar(col=col, fontsize=fontsize, cex=cex),
-             name=paste("label", label, sep="-"))
+             name=paste("label", name, sep="-"))
 }
 
 ## Code for "node" grobs
@@ -34,7 +34,7 @@ node <- function(label, x=.5, y=.5,
         if (th > nh && nh/th < cex)
             cex <- nh/th
     }
-    lab <- makeLabel(label, x, y, fontcolor, fontsize, cex)
+    lab <- makeLabel(label, x, y, fontcolor, fontsize, cex, name=label)
     if (is.null(height)) {
         height <- grobHeight(lab)
     }
@@ -161,7 +161,7 @@ drawCurve <- function(curve, col, lwd, lty) {
 }
 
 makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
-                      col, lwd, lty) {
+                      col, lwd, lty, name) {
   if (arrowType == "normal") arrowType <- "closed"
   if (arrowType == "vee") arrowType <- "open"
   if (arrowType == "none" || arrowType == "open" || arrowType == "closed") {
@@ -172,12 +172,12 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
       arrowlen <- unit(arrowsize*10, "native")
       arrow <- arrow(angle=20, type=arrowType, length=arrowlen)
     }
-    segmentsGrob(startX, startY,
-                 endX, endY,
-                 default.units="native",
-                 arrow=arrow,
-                 gp=gpar(col=col, fill=col,
-                         lwd=lwd, lty=lty))
+    z <- segmentsGrob(startX, startY,
+                      endX, endY,
+                      default.units="native",
+                      arrow=arrow,
+                      gp=gpar(col=col, fill=col,
+                              lwd=lwd, lty=lty))
   } else if (arrowType == "dot" || arrowType == "odot") {
     # FIXME: does not scale correctly compared to graphviz. documentation shows
     # graphviz sets default radius of 2, but does not work here. using 'length'
@@ -205,7 +205,7 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
                               gp=gpar(col=col, fill=col,
                                       lwd=lwd, lty=lty))
     } 
-    gList(head, segment)
+    z <- gList(head, segment)
   } else if (arrowType == "box" || arrowType == "obox") {
     #FIXME: calculation of length, r, etc has same problems as with "dot" above
     dx <- endX - startX
@@ -228,11 +228,13 @@ makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY,
                               gp=gpar(col=col, fill=col,
                                       lwd=lwd, lty=lty))
     } 
-    gList(head, segment)
+    z <- gList(head, segment)
   }
+  z <- editGrob(z, name=name)
 }
 
 makeEdge <- function(edge, edgemode) {
+    name <- paste(tail(edge), head(edge), sep="~")
     if (!length(edge@lwd))
         edge@lwd <- 1    
     if (!length(edge@lty))
@@ -254,7 +256,7 @@ makeEdge <- function(edge, edgemode) {
         x <- unit(getX(xy), "native")
         y <- unit(getY(xy), "native")
         cex <- 1
-        lab <- list(makeLabel(label, x, y, fontcol, fontsize, cex))
+        lab <- list(makeLabel(label, x, y, fontcol, fontsize, cex, name))
     } else {
         lab <- list()
     }
@@ -274,7 +276,8 @@ makeEdge <- function(edge, edgemode) {
       start <- list(makeArrow(arrowtail, arrowsize,
                               firstCP[1], firstCP[2], 
                               getX(sp(edge)), getY(sp(edge)), 
-                              col, edge@lwd, edge@lty))
+                              col, edge@lwd, edge@lty,
+                              name=paste("arrowtail", name, sep="-")))
     }
     
     # "forward" arrow
@@ -286,10 +289,12 @@ makeEdge <- function(edge, edgemode) {
       end <- list(makeArrow(arrowhead, arrowsize,
                             lastCP[1], lastCP[2], 
                             getX(ep(edge)), getY(ep(edge)), 
-                            col, edge@lwd, edge@lty))
+                            col, edge@lwd, edge@lty,
+                            name=paste("arrowhead", name, sep="-")))
     }
     
-    gTree(children=do.call("gList", c(curves, start, end, lab)))
+    gTree(children=do.call("gList", c(curves, start, end, lab)),
+          name=paste("edge", name, sep="-"))
 }
 
 drawEdge <- function(edge, edgemode) {
