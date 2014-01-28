@@ -1,16 +1,22 @@
 
-# Draw an Ragraph laid out graph using grid
+### Draw an Ragraph laid out graph using grid
 
-# Code for "node" grobs
+makeLabel <- function(label, x, y, col, fontsize, cex) {
+    textGrob(label, x, y,
+             gp=gpar(col=col, fontsize=fontsize, cex=cex),
+             name=paste("label", label, sep="-"))
+}
+
+## Code for "node" grobs
 
 node <- function(label, x=.5, y=.5,
                  shape="plain",
                  height=NULL, lwidth=NULL, rwidth=NULL,
-                 name=label,
+                 name=paste("node", label, sep="-"),
                  color="black",
                  fillcolor="transparent",
                  fontcolor="black",
-                 fontsize=10) {
+                 fontsize=10) {    
     # Shrink text if necessary
     cex <- 1
     if (!(is.null(height) || is.null(lwidth) || is.null(rwidth))) {
@@ -38,14 +44,15 @@ node <- function(label, x=.5, y=.5,
     }
     a <- 0.5 * (lwidth + rwidth)
     b <- 0.5 * height
+    boxName <- paste("box", label, sep="-")
     if (shape == "circle") {
-        box <- circleGrob(x, y, r=a, name="box",
+        box <- circleGrob(x, y, r=a, name=boxName,
                           gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "ellipse") { 
         angle <- seq(0, 2*pi, length=101)
         box <- polygonGrob(x + a*cos(angle),
                            y + b*sin(angle),
-                           name="box",
+                           name=boxName,
                            gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "polygon" || shape == "triangle" ||
                shape == "pentagon" || shape == "hexagon" ||
@@ -71,13 +78,13 @@ node <- function(label, x=.5, y=.5,
             a <- a*(1/cos(pi/vertices))
         
         box <- polygonGrob(x + a*cos(angle), y + b*sin(angle),
-                           name="box",
+                           name=boxName,
                            gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "box" || shape == "rect" || shape == "rectangle") {
         box <- rectGrob(x, y,
                         width=lwidth + rwidth,
                         height=height,
-                        name="box",         
+                        name=boxName,         
                         gp=gpar(col=color, fill=fillcolor))
     } else if (shape == "square") {
         box <- rectGrob(x, y, width=height, height=height,
@@ -85,14 +92,14 @@ node <- function(label, x=.5, y=.5,
     } else if (shape == "diamond") {
         xPoints <- unit.c(x - lwidth, x, x + rwidth, x)
         yPoints <- unit.c(y, y + b, y, y - b)
-        box <- polygonGrob(xPoints, yPoints, name="box",
+        box <- polygonGrob(xPoints, yPoints, name=boxName,
                            gp=gpar(col=color, fill=fillcolor))
     } else { # plain
         warning("Unsupported node shape; using 'box'")
         box <- rectGrob(x, y,
                         width=lwidth + rwidth,
                         height=height,
-                        name="box", gp=gpar(col=NA, fill=NA))
+                        name=boxName, gp=gpar(col=NA, fill=NA))
     }
     gTree(children=gList(box, lab),
           name=gsub("\n", "", name), cl="node")
@@ -140,12 +147,6 @@ drawNode <- function(node) {
                    rwidth=unit(rwidth, "native"),
                    color=col, fillcolor=fill,
                    fontcolor=fontcol, fontsize=fontsize))
-}
-
-makeLabel <- function(label, x, y, col, fontsize, cex) {
-    textGrob(label, x, y,
-             gp=gpar(col=col, fontsize=fontsize, cex=cex),
-             name="label")
 }
 
 makeCurve <- function(curve, col, lwd, lty) {
