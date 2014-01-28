@@ -82,6 +82,11 @@ node <- function(label, x=.5, y=.5,
     } else if (shape == "square") {
         box <- rectGrob(x, y, width=height, height=height,
                         gp=gpar(col=color, fill=fillcolor))
+    } else if (shape == "diamond") {
+        xPoints <- unit.c(x - lwidth, x, x + rwidth, x)
+        yPoints <- unit.c(y, y + b, y, y - b)
+        box <- polygonGrob(xPoints, yPoints, name="box",
+                           gp=gpar(col=color, fill=fillcolor))
     } else { # plain
         warning("Unsupported node shape; using 'box'")
         box <- rectGrob(x, y,
