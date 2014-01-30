@@ -149,10 +149,11 @@ drawNode <- function(node) {
                    fontcolor=fontcol, fontsize=fontsize))
 }
 
-makeCurve <- function(curve, col, lwd, lty) {
+makeCurve <- function(curve, col, lwd, lty, name) {
     controlPoints <- pointList(curve)
     bezierGrob(unit(sapply(controlPoints, "[" ,1), "native"),
                unit(sapply(controlPoints, "[" ,2), "native"),
+	       name=name,
                gp=gpar(col=col, lwd=lwd, lty=lty))
 }
 
@@ -240,8 +241,10 @@ makeEdge <- function(edge, edgemode) {
         edge@lty <- "solid"
     splines <- splines(edge)
     n <- length(splines)
+    curveNames <- paste("curve", name, seq(along=splines), sep="-")
     col <- color(edge)
-    curves <- lapply(splines, makeCurve, col=col, lwd=edge@lwd, lty=edge@lty)
+    curves <- mapply(makeCurve, splines, col=col, lwd=edge@lwd, lty=edge@lty,
+		 name=curveNames, SIMPLIFY=FALSE)
     
     # Edge label
     if (length(labelText(txtLabel(edge))) != 0) {
