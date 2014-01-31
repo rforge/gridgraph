@@ -35,7 +35,7 @@ gnel <- new("graphNEL",
                        b=list(),
                        c=list()),
             edgemode="directed")
-rag <- agopenSized(gnel, "")
+rag <- agopenTrue(gnel, "")
 graphWidth(rag)
 graphHeight(rag)
 }

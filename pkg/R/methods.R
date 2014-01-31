@@ -1,4 +1,4 @@
-## Create an Ragraph object with size determined by graphviz
+## Methods for laying out and plotting Ragraph objects
 
 ## the following methods return and Ragraph's dimensions in inches
 ## used for determining size of graph used to override Rgraphciz's defaults, and
@@ -16,20 +16,23 @@ graphSize <- function (graph) {
     return(paste(graphWidth(graph), graphHeight(graph), sep=","))
 }
 
-## Rgraphviz's agopen() sets the size of an Ragraph object to either the size
-## of the open graphics device, or 7x7 inches.
-## agopenSized produces an Ragraph object of the size determined by graphviz
-## NB: agopenSized() does not accept argument 'layout' as it should always
+## 2014-01-31: As of Rgraphviz v2.2.1
+## + agopen() sets the size of an Ragraph object to either the size of the
+##   open graphics device, or 7x7 inches
+## + agopen() does not pass pass through edge weight information
+## agopenTrue():
+## + produces an Ragraph object of the size determined by graphviz
+## + passes through accurate edge weight information
+## NB: agopenTrue() does not accept argument 'layout' as it should always
 ## lay out the graph
-agopenSized <- function(graph, name, nodes, edges, kind = NULL,
+agopenTrue <- function(graph, name, nodes, edges, kind = NULL,
                         layoutType = "dot", attrs = list(), nodeAttrs = list(), 
                         edgeAttrs = list(), subGList = list(),
                         edgeMode = edgemode(graph),
                         recipEdges = c("combined", "distinct")) {
     # set size to 0x0 inches to let graphviz set size of boundBox
     attrs$graph$size <- "0,0"
-    # set edge weights to those specified in graph (Rgraphviz agopen() does not
-    # do this
+    # set edge weights to those specified in graph
     weights <- unlist(edgeWeights(graph))
     names(weights) <- edgeNames(graph)
     edgeAttrs$weight <- weights

@@ -1,18 +1,18 @@
-\name{agopenSized}
-\alias{agopenSized}
+\name{agopenTrue}
+\alias{agopenTrue}
 \title{
-A function to obtain an \code{Ragraph} object with size set by graphviz
+  A function to obtain a laidout \code{Ragraph} object
 }
 \description{
-  This function will read in a \code{graph} object and create an
-  \code{Ragraph} object using the \pkg{Rgraphviz} function \code{agopen}, but
-  with the size determined by graphviz, and not the \code{device} size.
+  This function is a wrapper for the \pkg{Rgraphviz} function
+  \code{agopen} and will produce a laidout \code{Ragraph} object with
+  layout more true to the result produced by graphviz.
 }
 \usage{
-agopenSized(graph, name, nodes, edges, kind = NULL, layoutType = "dot", 
-            attrs = list(), nodeAttrs = list(), edgeAttrs = list(),
-            subGList = list(), edgeMode = edgemode(graph),
-            recipEdges = c("combined", "distinct"))
+agopenTrue(graph, name, nodes, edges, kind = NULL, layoutType = "dot", 
+           attrs = list(), nodeAttrs = list(), edgeAttrs = list(),
+           subGList = list(), edgeMode = edgemode(graph),
+           recipEdges = c("combined", "distinct"))
 }
 \arguments{
   \item{graph}{An object of class \code{graphNEL}}
@@ -31,16 +31,18 @@ agopenSized(graph, name, nodes, edges, kind = NULL, layoutType = "dot",
     \code{combined}}
 }
 \details{
-  While \code{agopen} can produce \code{Ragraph} objects laid out by
-  graphviz, it currently (2013-01-22) produces graphs of the same size
-  as the current \code{device}, or at a default size of 7x7 inches.
+  As of \code{Rgraphviz} version 2.2.1 (2013-01-31) \code{agopen}:
+  \itemize{
+    \item Produces graphs of the same size as the current \code{device},
+    or at a default size of 7x7 inches.
+    \item Does not pass through edge weight information.
+  }
 
-  This function performs exactly the same as \code{agopen} except it
-  polls graphviz for the appropriate size of the graph and produces a
-  laidout \code{Ragraph} object at this size.
+  This function ensures the resulting \code{Ragraph} object has its size
+  determined by graphviz, and ensures edge weight information is passed through.
 }
 \value{
-  An object of class 'Ragraph'
+  An object of class \code{Ragraph}
 }
 \references{
   graphviz
@@ -57,7 +59,7 @@ gnel <- new("graphNEL",
                        b=list(),
                        c=list()),
             edgemode="directed")
-rag <- agopenSized(gnel, "")
+rag <- agopenTrue(gnel, "")
 grid.graph(rag)
 }
 \keyword{ dplot }
