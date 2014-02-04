@@ -16,7 +16,7 @@ graphHeight(graph)
   \item{graph}{a laidout \code{Ragraph} object}
 }
 \value{
-  A \code{numeric} \code{vector} of length 1.
+  A numeric vector of length 1.
 }
 \references{
   graphviz

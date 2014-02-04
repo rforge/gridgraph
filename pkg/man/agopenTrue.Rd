@@ -33,7 +33,7 @@ agopenTrue(graph, name, nodes, edges, kind = NULL, layoutType = "dot",
 \details{
   As of \code{Rgraphviz} version 2.2.1 (2013-01-31) \code{agopen}:
   \itemize{
-    \item Produces graphs of the same size as the current \code{device},
+    \item Produces graphs of the same size as the current device,
     or at a default size of 7x7 inches.
     \item Does not pass through edge weight information.
   }
