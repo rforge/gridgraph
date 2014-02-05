@@ -315,8 +315,8 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
     # the original graphNEL
     bb <- boundBox(rag)
     # Ensure aspect ratio
-    pushViewport(viewport(width=unit(getX(upRight(bb))/72, "inches"),
-                          height=unit(getY(upRight(bb))/72, "inches"),
+    pushViewport(viewport(width=unit(getX(upRight(bb)), "points"),
+                          height=unit(getY(upRight(bb)), "points"),
                           layout=grid.layout(1, 1,
                               widths=(getX(upRight(bb)) - getX(botLeft(bb))) /
                                      (getY(upRight(bb)) - getY(botLeft(bb))),
