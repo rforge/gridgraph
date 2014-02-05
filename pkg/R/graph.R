@@ -12,7 +12,7 @@ makeLabel <- function(label, x, y, col, fontsize, cex, name) {
 node <- function(label, x=.5, y=.5,
                  shape="plain",
                  height=NULL, lwidth=NULL, rwidth=NULL,
-                 name=paste("node", label, sep="-"),
+                 name,
                  color="black",
                  fillcolor="transparent",
                  fontcolor="black",
@@ -44,7 +44,7 @@ node <- function(label, x=.5, y=.5,
     }
     a <- 0.5 * (lwidth + rwidth)
     b <- 0.5 * height
-    boxName <- paste("box", label, sep="-")
+    boxName <- paste("box", name, sep="-")
     if (shape == "circle") {
         box <- circleGrob(x, y, r=a, name=boxName,
                           gp=gpar(col=color, fill=fillcolor))
@@ -138,14 +138,15 @@ drawNode <- function(node) {
     fontsize <- labelFontsize(txtLabel(node))
     label <- labelText(txtLabel(node))
     xy <- getNodeXY(node)
-    grid.draw(node(label,
-                   unit(xy$x, "native"),
-                   unit(xy$y, "native"),
+    name <- name(node)
+    grid.draw(node(label=label,
+                   x=unit(xy$x, "native"),
+                   y=unit(xy$y, "native"),
                    shape=shape,
                    height=unit(height, "native"),
                    lwidth=unit(lwidth, "native"),
                    rwidth=unit(rwidth, "native"),
-                   color=col, fillcolor=fill,
+                   name=name, color=col, fillcolor=fill,
                    fontcolor=fontcol, fontsize=fontsize))
 }
 
