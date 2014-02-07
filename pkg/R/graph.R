@@ -34,7 +34,7 @@ node <- function(label, x=.5, y=.5,
         if (th > nh && nh/th < cex)
             cex <- nh/th
     }
-    lab <- makeLabel(label, x, y, fontcolor, fontsize, cex, name=label)
+    lab <- makeLabel(label, x, y, fontcolor, fontsize, cex, name=name)
     if (is.null(height)) {
         height <- grobHeight(lab)
     }
