@@ -37,13 +37,13 @@ agopenTrue <- function(graph, name, nodes, edges, kind = NULL,
     names(weights) <- edgeNames(graph)
     edgeAttrs$weight <- weights
     # let graphviz set node sizes unless specififed
-    if (is.null(attrs$fixedsize)) {
+    if (is.null(attrs$node$fixedsize)) {
         attrs$node$fixedsize <- "FALSE"
     }
-    if (is.null(attrs$width)) {
+    if (is.null(attrs$node$width)) {
         attrs$node$width <- ""
     }
-    if (is.null(attrs$height)) {
+    if (is.null(attrs$node$height)) {
         attrs$node$height <- ""
     }
     # create temporary Ragraph to extract boundBox info
