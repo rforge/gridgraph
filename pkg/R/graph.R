@@ -1,13 +1,6 @@
 
 ### Draw an Ragraph laid out graph using grid
 
-## create label grobs
-makeLabel <- function(label, x, y, col, fontsize, cex, name) {
-    textGrob(label, x, y,
-             gp=gpar(col=col, fontsize=fontsize, cex=cex),
-             name=paste("label", name, sep="-"))
-}
-
 ## Code for "node" grobs
 
 node <- function(label, x=.5, y=.5,

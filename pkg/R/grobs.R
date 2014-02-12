@@ -1,3 +1,10 @@
+## create label grobs
+makeLabel <- function(label, x, y, col, fontsize, cex, name) {
+    textGrob(label, x, y,
+             gp=gpar(col=col, fontsize=fontsize, cex=cex),
+             name=paste("label", name, sep="-"))
+}
+
 ## create box grob for node gTree in node()
 nodeBox <- function(shape, name, x, y, height, lwidth, rwidth, color,
                     fillcolor) {
