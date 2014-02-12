@@ -10,20 +10,30 @@ graphHeight <- function (graph) {
     return(getY(upRight(boundBox(graph)))/72)
 }
 
-## return an Ragraph's size as character string of form "x,y" for setting size
-## attribute for agopen()
-graphSize <- function (graph) {
-    return(paste(graphWidth(graph), graphHeight(graph), sep=","))
-}
-
+## groomAttrs() takes the 'attrs' list passed to agopenTrue() and alters
+## certain values to preferred defaults, overriding Rgraphviz defaults.
+## Arguments:
+##   attrs - list
+## Values
+##   attrs - list
 groomAttrs <- function(attrs) {
-    # checks to see if user has explicitly set a graph size in attrs list
-    # if nothing has been specified set to "0,0" to allow 
+    # assume that is user has a desired graph size this will be passed to
+    # agopenTrue() in the attrs list by:
+    #   agopenTrue(..., attrs=list(graph=list(size="XX,YY")))
+    # if attrs$graph$size in NULL assume user has not set a size
+    # and set this "" to allow graphviz to
+    # determine size of graph
     if (is.null(attrs$graph$size)) attrs$graph$size <- ""
     
-    # ANOTHER EXPLANATION
+    # assume if user wants to control node sized this will be passed to
+    # agopenTrue() in the attrs list by:
+    #   agopenTrue(..., attrs=list(node=list(fixedsize="VALUE", width="XX",
+    #                                        height="YY")))
+    # if attrs$node$fixedsize attrs$node$width attrs$node$height are NULL
+    # assume user has not set a size and set to "" to allow graphviz to
+    # determine values
     if (is.null(attrs$node$fixedsize)) {
-        attrs$node$fixedsize <- "FALSE"
+        attrs$node$fixedsize <- ""
     }
     if (is.null(attrs$node$width)) {
         attrs$node$width <- ""
@@ -31,14 +41,27 @@ groomAttrs <- function(attrs) {
     if (is.null(attrs$node$height)) {
         attrs$node$height <- ""
     }
+
+    # return modified attrs list
     attrs
 }
 
+## groomEdgeAttrs() takes the edgeAttrs list passed to agopenTrue() and
+## certain values to preferred defaults, overriding Rgraphviz defaults.
+## Arguments:
+##   graph - "graphNEL" object
+##   edgeAttrs - list
+## Values
+##   edgeAttrs - list
 groomEdgeAttrs <- function(graph, edgeAttrs) {
-    # EXPLAIN ME
+    # Rgraphviz does not pass edge weights from a graph through to graphviz
+    # extract edge weights from graph and add named vector of weights to
+    # edgeAttrs list
     weights <- unlist(edgeWeights(graph))
     names(weights) <- edgeNames(graph)
     edgeAttrs$weight <- weights
+
+    # return modified edgeAttrs list
     edgeAttrs
 }
 
@@ -56,9 +79,10 @@ agopenTrue <- function(graph, name, nodes, edges, kind = NULL,
                         edgeAttrs = list(), subGList = list(),
                         edgeMode = edgemode(graph),
                         recipEdges = c("combined", "distinct")) {
-    # FIXME: explain please
+    # modifies attrs list to replace Rgraphviz defaults with preferred default
+    # values
     attrs <- groomAttrs(attrs)
-    # set edge weights to those specified in graph
+    # set edge weights to those specified in graph as Rgraphviz 
     edgeAttrs <- groomEdgeAttrs(graph, edgeAttrs)
 
     agopen(graph=graph, name=name, nodes=nodes, edges=edges, kind=kind, 
