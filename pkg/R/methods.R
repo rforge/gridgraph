@@ -65,15 +65,11 @@ groomEdgeAttrs <- function(graph, edgeAttrs) {
     edgeAttrs
 }
 
-## 2014-01-31: As of Rgraphviz v2.2.1
-## + agopen() sets the size of an Ragraph object to either the size of the
-##   open graphics device, or 7x7 inches
-## + agopen() does not pass pass through edge weight information
-## agopenTrue():
-## + produces an Ragraph object of the size determined by graphviz
-## + passes through accurate edge weight information
-## NB: agopenTrue() does not accept argument 'layout' as it should always
-## lay out the graph
+## agopenTrue() is a wrapper for Rgraphviz's agopen()
+## it replaces certain Rgraphviz defaults with preferred defaults
+## and attempts to pass through graph features which Rgraphviz does not
+## NB: agopenTrue() does not accept a 'laidout' argument as graph should
+##     always be laid out
 agopenTrue <- function(graph, name, nodes, edges, kind = NULL,
                         layoutType = "dot", attrs = list(), nodeAttrs = list(), 
                         edgeAttrs = list(), subGList = list(),
