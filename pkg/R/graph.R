@@ -28,7 +28,10 @@ node <- function(label, x=.5, y=.5,
         if (th > nh && nh/th < cex)
             cex <- nh/th
     }
+    
+    # make label grob
     lab <- makeLabelGrob(label, x, y, fontcolor, fontsize, cex, name=name)
+    
     if (is.null(height)) {
         height <- grobHeight(lab)
     }
@@ -37,6 +40,7 @@ node <- function(label, x=.5, y=.5,
         rwidth <- 0.5*grobWidth(lab)
     }
 
+    # make box grob
     box <- makeBoxGrob(shape=shape, name=name, x=x, y=y, height=height,
                        lwidth=lwidth, rwidth=rwidth, color=color,
                        fillcolor=fillcolor)
