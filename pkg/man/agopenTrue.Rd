@@ -35,11 +35,13 @@ agopenTrue(graph, name, nodes, edges, kind = NULL, layoutType = "dot",
   \itemize{
     \item Produces graphs of the same size as the current device,
     or at a default size of 7x7 inches.
+    \item Forces nodes to fixed default height and width.
     \item Does not pass through edge weight information.
   }
 
-  This function ensures the resulting \code{Ragraph} object has its size
-  determined by graphviz, and ensures edge weight information is passed through.
+  This function returns an \code{Ragraph} object with graph
+  and node sizes set by graphviz or by the user.  It also ensures
+  edge weight information is passed through.
 }
 \value{
   An object of class \code{Ragraph}
