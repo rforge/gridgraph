@@ -28,7 +28,7 @@ node <- function(label, x=.5, y=.5,
         if (th > nh && nh/th < cex)
             cex <- nh/th
     }
-    lab <- makeLabel(label, x, y, fontcolor, fontsize, cex, name=name)
+    lab <- makeLabelGrob(label, x, y, fontcolor, fontsize, cex, name=name)
     if (is.null(height)) {
         height <- grobHeight(lab)
     }
@@ -37,9 +37,9 @@ node <- function(label, x=.5, y=.5,
         rwidth <- 0.5*grobWidth(lab)
     }
 
-    box <- nodeBox(shape=shape, name=name, x=x, y=y, height=height,
-                   lwidth=lwidth, rwidth=rwidth, color=color,
-                   fillcolor=fillcolor)
+    box <- makeBoxGrob(shape=shape, name=name, x=x, y=y, height=height,
+                       lwidth=lwidth, rwidth=rwidth, color=color,
+                       fillcolor=fillcolor)
     
     gTree(children=gList(box, lab),
           name=gsub("\n", "", name), cl="node")
@@ -127,7 +127,7 @@ makeEdge <- function(edge, edgemode) {
         x <- unit(getX(xy), "native")
         y <- unit(getY(xy), "native")
         cex <- 1
-        lab <- list(makeLabel(label, x, y, fontcol, fontsize, cex, name))
+        lab <- list(makeLabelGrob(label, x, y, fontcol, fontsize, cex, name))
     } else {
         lab <- list()
     }
@@ -144,11 +144,11 @@ makeEdge <- function(edge, edgemode) {
         (getX(sp(edge)) == 0 && getY(sp(edge)) == 0)) {
       start <- list()
     } else {
-      start <- list(makeArrow(arrowtail, arrowsize,
-                              firstCP[1], firstCP[2], 
-                              getX(sp(edge)), getY(sp(edge)), 
-                              col, edge@lwd, edge@lty,
-                              name=paste("arrowtail", name, sep="-")))
+      start <- list(makeArrowGrob(arrowtail, arrowsize,
+                                  firstCP[1], firstCP[2], 
+                                  getX(sp(edge)), getY(sp(edge)), 
+                                  col, edge@lwd, edge@lty,
+                                  name=paste("arrowtail", name, sep="-")))
     }
     
     # "forward" arrow
@@ -157,11 +157,11 @@ makeEdge <- function(edge, edgemode) {
         (getX(ep(edge)) == 0 && getY(ep(edge)) == 0)) {
       end <- list()
     } else {
-      end <- list(makeArrow(arrowhead, arrowsize,
-                            lastCP[1], lastCP[2], 
-                            getX(ep(edge)), getY(ep(edge)), 
-                            col, edge@lwd, edge@lty,
-                            name=paste("arrowhead", name, sep="-")))
+      end <- list(makeArrowGrob(arrowhead, arrowsize,
+                                lastCP[1], lastCP[2], 
+                                getX(ep(edge)), getY(ep(edge)), 
+                                col, edge@lwd, edge@lty,
+                                name=paste("arrowhead", name, sep="-")))
     }
     
     gTree(children=do.call("gList", c(curves, start, end, lab)),

@@ -1,13 +1,13 @@
 ## create label grobs
-makeLabel <- function(label, x, y, col, fontsize, cex, name) {
+makeLabelGrob <- function(label, x, y, col, fontsize, cex, name) {
     textGrob(label, x, y,
              gp=gpar(col=col, fontsize=fontsize, cex=cex),
              name=paste("label", name, sep="-"))
 }
 
 ## create box grob for node gTree in node()
-nodeBox <- function(shape, name, x, y, height, lwidth, rwidth, color,
-                    fillcolor) {
+makeBoxGrob <- function(shape, name, x, y, height, lwidth, rwidth, color,
+                        fillcolor) {
     a <- 0.5 * (lwidth + rwidth)
     b <- 0.5 * height
     boxName <- paste("box", name, sep="-")
@@ -71,8 +71,8 @@ nodeBox <- function(shape, name, x, y, height, lwidth, rwidth, color,
     box
 }
 
-makeArrow <- function(arrowType, arrowsize, startX, startY, endX, endY, 
-                      col, lwd, lty, name) {
+makeArrowGrob <- function(arrowType, arrowsize, startX, startY, endX, endY, 
+                          col, lwd, lty, name) {
   if (arrowType == "normal") arrowType <- "closed"
   if (arrowType == "vee") arrowType <- "open"
   if (arrowType == "none" || arrowType == "open" || arrowType == "closed") {
