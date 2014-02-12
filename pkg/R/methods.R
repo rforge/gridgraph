@@ -16,6 +16,32 @@ graphSize <- function (graph) {
     return(paste(graphWidth(graph), graphHeight(graph), sep=","))
 }
 
+groomAttrs <- function(attrs) {
+    # checks to see if user has explicitly set a graph size in attrs list
+    # if nothing has been specified set to "0,0" to allow 
+    if (is.null(attrs$graph$size)) attrs$graph$size <- ""
+    
+    # ANOTHER EXPLANATION
+    if (is.null(attrs$node$fixedsize)) {
+        attrs$node$fixedsize <- "FALSE"
+    }
+    if (is.null(attrs$node$width)) {
+        attrs$node$width <- ""
+    }
+    if (is.null(attrs$node$height)) {
+        attrs$node$height <- ""
+    }
+    attrs
+}
+
+groomEdgeAttrs <- function(graph, edgeAttrs) {
+    # EXPLAIN ME
+    weights <- unlist(edgeWeights(graph))
+    names(weights) <- edgeNames(graph)
+    edgeAttrs$weight <- weights
+    edgeAttrs
+}
+
 ## 2014-01-31: As of Rgraphviz v2.2.1
 ## + agopen() sets the size of an Ragraph object to either the size of the
 ##   open graphics device, or 7x7 inches
@@ -30,30 +56,11 @@ agopenTrue <- function(graph, name, nodes, edges, kind = NULL,
                         edgeAttrs = list(), subGList = list(),
                         edgeMode = edgemode(graph),
                         recipEdges = c("combined", "distinct")) {
-    # set size to 0x0 inches to let graphviz set size of boundBox
-    attrs$graph$size <- "0,0"
+    # FIXME: explain please
+    attrs <- groomAttrs(attrs)
     # set edge weights to those specified in graph
-    weights <- unlist(edgeWeights(graph))
-    names(weights) <- edgeNames(graph)
-    edgeAttrs$weight <- weights
-    # let graphviz set node sizes unless specififed
-    if (is.null(attrs$node$fixedsize)) {
-        attrs$node$fixedsize <- "FALSE"
-    }
-    if (is.null(attrs$node$width)) {
-        attrs$node$width <- ""
-    }
-    if (is.null(attrs$node$height)) {
-        attrs$node$height <- ""
-    }
-    # create temporary Ragraph to extract boundBox info
-    temp <- agopen(graph=graph, name=name, nodes=nodes, edges=edges, kind=kind, 
-                   layout=TRUE, layoutType=layoutType, attrs=attrs, 
-                   nodeAttrs=nodeAttrs, edgeAttrs=edgeAttrs, subGList=subGList,
-                   edgeMode=edgeMode, recipEdges=recipEdges)
-    # set graph size attribute with size generated in 'temp'
-    attrs$graph$size <- graphSize(temp)
-    
+    edgeAttrs <- groomEdgeAttrs(graph, edgeAttrs)
+
     agopen(graph=graph, name=name, nodes=nodes, edges=edges, kind=kind, 
            layout=TRUE, layoutType=layoutType, attrs=attrs, 
            nodeAttrs=nodeAttrs, edgeAttrs=edgeAttrs, subGList=subGList,
