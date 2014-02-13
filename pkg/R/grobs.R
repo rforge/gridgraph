@@ -71,6 +71,7 @@ makeBoxGrob <- function(shape, name, x, y, height, lwidth, rwidth, color,
     box
 }
 
+## create arrow grob
 makeArrowGrob <- function(arrowType, arrowsize, startX, startY, endX, endY, 
                           col, lwd, lty, name) {
   if (arrowType == "normal") arrowType <- "closed"

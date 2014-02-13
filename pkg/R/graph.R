@@ -142,6 +142,35 @@ makeEdge <- function(edge, edgemode) {
     arrowhead <- arrowhead(edge)
     arrowtail <- arrowtail(edge)
 
+    ## APOLOGY and EXPLANATION
+    ##
+    ## The "back" and "forward" arrows go through some contorted conditionals
+    ## before making arrow ojects. This is mostly because of the way edge@sp and
+    ## edge@ep are produced. A directed graph will have a sensible edge@ep for
+    ## every edge with an arrow at the end (or edge@sp for an arrow at the
+    ## start). This is used to plot the arrow between the last control point
+    ## of an edge's splines and the border of the node.
+    ##
+    ## An undirected graph does not require edeg@sp or edge@ep values.
+    ##
+    ## Unfortunately Rgraphviz v.2.6.0 will produced meaningless edge@sp and
+    ## edge@ep values on undirected graphs - values of "0,0", "NA,0" or "0,NA".
+    ## For some as-yet-undiscovered reason it will also occasionally
+    ## produce these types of values on a directed graph where no arrow is
+    ## required.
+    ##
+    ## As a result, before attempting to draw an arrow the code will
+    ## check for the following things:
+    ##   1) is the edgemode of this graph undirected?
+    ##   2) is the direction of this edge such that no arrow should be drawn
+    ##      here? e.g. "back" arrow on "forward" edge
+    ##   3) is the X-value in the sp/ep NA?
+    ##   4) is the Y-value in the sp/ep NA?
+    ##   5) is sp/ep equal to "0,0"?
+    ## and if any of these is true an arrow is NOT drawn.
+    ##
+    ## Only if none of these conditions is true will an arrow be drawn.
+    
     # "back" arrow    
     if (edgemode == "undirected" || edge@dir == "forward" ||
         (is.na(getX(sp(edge))) || is.na(getY(sp(edge)))) ||
