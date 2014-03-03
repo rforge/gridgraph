@@ -221,10 +221,12 @@ grid.graph <- function(rag, newpage=FALSE, nodesOnTop=TRUE) {
                           layout=grid.layout(1, 1,
                               widths=(getX(upRight(bb)) - getX(botLeft(bb))) /
                                      (getY(upRight(bb)) - getY(botLeft(bb))),
-                              respect=TRUE)))
+                              respect=TRUE),
+                          name="graphSizeVP"))
     pushViewport(viewport(layout.pos.col=1,
                           xscale=c(getX(botLeft(bb)), getX(upRight(bb))),
-                          yscale=c(getY(botLeft(bb)), getY(upRight(bb)))))
+                          yscale=c(getY(botLeft(bb)), getY(upRight(bb))),
+                          name="graphScaleVP"))
     if (nodesOnTop) {
         lapply(AgEdge(rag), drawEdge, edgemode(rag))
         lapply(AgNode(rag), drawNode)

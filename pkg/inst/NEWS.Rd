@@ -32,6 +32,8 @@
     now handles arrowsize better
     
     \item Improved naming of grobs
+
+    \item Named the graph viewports
   }
 }
 
