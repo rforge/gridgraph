@@ -8,8 +8,7 @@ Title:        Drawing Graphs with Grid
 Authors@R:    c(person(given="Paul", family="Murrell", 
 	               email="p.murrell@auckland.ac.nz", role=c("cre","aut")), 
 		person(given="Ashley Noel", family="Hinton", 
-		       email="ahin017@aucklanduni.ac.nz", role="aut",
-		       comment="GPG key ID: 0xA406FB9A"))
+		       email="ashley@canadia.co.nz", role="aut"))
 Description:  Functions for drawing node-and-edge graphs that have been 
               laid out by graphviz.
 License:      GPL (>= 2)
