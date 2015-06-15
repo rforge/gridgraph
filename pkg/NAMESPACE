@@ -1,4 +1,8 @@
 
+import(grid)
+import(graph)
+import(Rgraphviz)
+
 export("grid.graph",
        "agopenTrue",
        "graphWidth",
